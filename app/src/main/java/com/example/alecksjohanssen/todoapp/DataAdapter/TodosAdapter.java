@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -39,6 +40,7 @@ public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.ViewHolder> 
         Todo todo = mTodos.get(position);
         TextView textView = holder.tvContent;
         textView.setText(todo.getContent());
+        holder.checkBox.setTag(position);
     }
 
     @Override
@@ -55,12 +57,14 @@ public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.ViewHolder> 
         public EditText editContent;
         public Button btnCreateContent;
         public TextView tvContent;
+        public CheckBox checkBox;
 
         public ViewHolder(View itemView) {
             super(itemView);
             editContent = (EditText) itemView.findViewById(R.id.tdEditText);
             btnCreateContent = (Button) itemView.findViewById(R.id.tdAddItems);
             tvContent = (TextView) itemView.findViewById(R.id.tvContent);
+            checkBox = (CheckBox) itemView.findViewById(R.id.todo_checkbox);
         }
     }
 
