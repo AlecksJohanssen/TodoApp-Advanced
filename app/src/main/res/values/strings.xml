@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TodoApp</string>
+    <string name="Add">New Todo</string>
+    <string name="etTodo">What is your main focus today?</string>
 </resources>
