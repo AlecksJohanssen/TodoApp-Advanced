@@ -1,5 +1,6 @@
 package com.example.alecksjohanssen.todoapp;
 
+import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,25 +12,32 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.alecksjohanssen.todoapp.DataAdapter.CustomRCAdapter;
 import com.example.alecksjohanssen.todoapp.DataAdapter.TodosAdapter;
 import com.example.alecksjohanssen.todoapp.DataModel.Todo;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private ArrayList<Todo> mTodos = new ArrayList<Todo>();
+    private static ArrayList<Todo> mTodos = new ArrayList<Todo>();
     private Button btnCreateContent;
     private String mContent;
     private EditText contentValue;
-    private TodosAdapter adapter;
+    private static TodosAdapter adapter;
     private CheckBox checkBox;
+    private TextView textView;
     private RecyclerView recyclerView;
+    private static Activity thisActivity = null;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        thisActivity = this;
         recyclerView = (RecyclerView) findViewById(R.id.rvContents);
         adapter = new TodosAdapter(this, mTodos);
         recyclerView.setAdapter(adapter);
@@ -37,7 +45,10 @@ public class MainActivity extends AppCompatActivity {
         contentValue = (EditText) findViewById(R.id.tdEditText);
         btnCreateContent = (Button) findViewById(R.id.tdAddItems);
         AddNewTodo();
+
     }
+
+
 
     public void onCheckboxClicked(View v) {
         checkBox = (CheckBox) v.findViewById(R.id.todo_checkbox);
@@ -49,16 +60,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    public static void onItemLongClicked(int position) {
+        mTodos.remove(position);
+        adapter.notifyItemRemoved(position);
+        Toast.makeText(thisActivity, "To-do removed.", Toast.LENGTH_SHORT).show();
+    }
 
     private void AddNewTodo() {
         btnCreateContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mContent = (contentValue.getText().toString());
-                mTodos.add(new Todo(mContent));
-                adapter.notifyDataSetChanged();
-                contentValue.setText(null);
+                if(mContent.isEmpty() || mContent.contains(" ")) {
+                    Toast.makeText(getApplicationContext(), "Please type something in!", Toast.LENGTH_SHORT).show();
+                } else {
+                    mTodos.add(new Todo(mContent));
+                    adapter.notifyDataSetChanged();
+                    contentValue.setText(null);
+                }
             }
         });
     }

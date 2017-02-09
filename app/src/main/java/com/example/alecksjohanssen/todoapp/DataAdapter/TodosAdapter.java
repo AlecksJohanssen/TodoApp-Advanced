@@ -35,11 +35,24 @@ public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.ViewHolder> 
         return mViewHolder;
     }
 
+    public interface OnItemLongClickListener {
+        public boolean onItemLongClicked(int position);
+    }
+
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         Todo todo = mTodos.get(position);
         TextView textView = holder.tvContent;
         textView.setText(todo.getContent());
+        holder.tvContent.setLongClickable(true);
+        holder.tvContent.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                MainActivity.onItemLongClicked(position);
+                return true;
+            }
+        });
+        holder.tvContent.setTag(position);
         holder.checkBox.setTag(position);
     }
 
