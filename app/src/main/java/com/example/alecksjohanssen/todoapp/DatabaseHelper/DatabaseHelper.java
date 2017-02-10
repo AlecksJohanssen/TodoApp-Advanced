@@ -57,7 +57,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
-                Todo todo = new Todo("");
+                Todo todo = new Todo("", 0);
                 todo.setContent(cursor.getString(0));
                 Log.d("ID", String.valueOf(cursor.getString(0)));
                 todoList.add(todo);

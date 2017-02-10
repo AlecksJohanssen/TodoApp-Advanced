@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         TDdb = new DatabaseHelper(this);
         myRef = database.getReference("todo");
         checkifOnline();
-        AddNewTodo();
+        addNewTodo();
         implementClickonRC();
     }
 
@@ -71,12 +71,15 @@ public class MainActivity extends AppCompatActivity {
         myRef.child("todo" + id).setValue(content);
     }
 
+    public void removeFromFirebase(String todo) {
+        myRef.child(todo).removeValue();
+    }
+
     private void checkifOnline() {
         if(alreadyExecuted = false) {
             alreadyExecuted = true;
             if(isOnline()) {
                 Toast.makeText(getApplicationContext(),"PULL DATA", Toast.LENGTH_SHORT).show();
-                mTodos.clear();
                 pullDataFromFireBase();
             } else {
                 mTodos.addAll(TDdb.getAllTodos());
@@ -113,6 +116,8 @@ public class MainActivity extends AppCompatActivity {
         ItemClickSupport.addTo(recyclerView).setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
+                int pos = mTodos.get(position).getID();
+                removeFromFirebase("todo" + pos);
                 mTodos.remove(position);
                 adapter.notifyItemRemoved(position);
                 Toast.makeText(getApplicationContext(), "To-do removed.", Toast.LENGTH_SHORT).show();
@@ -121,21 +126,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(isOnline()) {
-            mTodos.clear();
-            pullDataFromFireBase();
-        } else {
-            mTodos.clear();
-            mTodos.addAll(TDdb.getAllTodos());
-            adapter.notifyDataSetChanged();
-        }
-    }
+
 
     public void updateSingleRow(String editContent, int index) {
-        mTodos.set(index, new Todo(editContent));
+        mTodos.set(index, new Todo(editContent, index));
         adapter.notifyItemChanged(index);
     }
 
@@ -146,8 +140,7 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot childDataSnapshot : dataSnapshot.getChildren()) {
                     String value = childDataSnapshot.getValue(String.class);
-                    mTodos.add(new Todo(value));
-                    adapter.notifyDataSetChanged();
+                    mTodos.add(new Todo(value, 0));
                 }
             }
 
@@ -158,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void AddNewTodo() {
+    private void addNewTodo() {
         btnCreateContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,10 +162,14 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Please type something in!", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    mTodos.add(new Todo(mContent));
+                    Todo todo = new Todo(mContent, mTodos.size());
+                    todo.setContent(mContent);
+                    todo.setID(mTodos.size()+1);
+                    Log.d("Size", String.valueOf(mTodos.size()+1));
+                    mTodos.add(todo);
                     adapter.notifyDataSetChanged();
                     contentValue.setText(null);
-                    pushToFireBase(mContent, mTodos.size() -1);
+                    pushToFireBase(mContent, mTodos.size());
                     TDdb.insertData(mContent);
                 }
             }

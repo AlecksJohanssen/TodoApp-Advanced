@@ -14,8 +14,9 @@ public class Todo {
     public Todo() {}
 
 
-    public Todo(String content) {
+    public Todo(String content,int id) {
         mContent = content;
+        mID = id;
     }
 
     public int getID() {

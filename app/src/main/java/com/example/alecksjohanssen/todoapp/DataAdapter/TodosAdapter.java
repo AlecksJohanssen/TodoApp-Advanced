@@ -70,6 +70,8 @@ public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.ViewHolder> 
                 CheckBox cb = (CheckBox) v;
                 int clickedPos = ((Integer)cb.getTag()).intValue();
                 if(cb.isChecked()) {
+                    int pos = mTodos.get(clickedPos).getID();
+                    ((MainActivity) getContext()).removeFromFirebase("todo" + pos);
                     mTodos.remove(clickedPos);
                     notifyItemRemoved(clickedPos);
                     notifyItemRangeChanged(clickedPos, mTodos.size());
