@@ -88,8 +88,6 @@ public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.ViewHolder> 
         return mTodos.size();
     }
 
-
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public EditText editContent;
         public Button btnCreateContent;

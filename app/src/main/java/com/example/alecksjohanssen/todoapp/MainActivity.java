@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.FragmentActivity;
@@ -101,6 +102,10 @@ public class MainActivity extends AppCompatActivity {
                 mEditTodo.show(getSupportFragmentManager(), "activity");
                 Bundle args = new Bundle();
                 args.putInt("item_position", position);
+                SharedPreferences.Editor editor = getSharedPreferences("key", MODE_PRIVATE).edit();
+                Log.d("Data", mTodos.get(position).getContent());
+                editor.putString("current_todo", mTodos.get(position).getContent());
+                editor.commit();
                 mEditTodo.setArguments(args);
             }
         });
@@ -125,6 +130,11 @@ public class MainActivity extends AppCompatActivity {
             mTodos.addAll(TDdb.getAllTodos());
             adapter.notifyDataSetChanged();
         }
+    }
+
+    public void updateSingleRow(String editContent, int index) {
+        mTodos.set(index, new Todo(editContent));
+        adapter.notifyItemChanged(index);
     }
 
 
