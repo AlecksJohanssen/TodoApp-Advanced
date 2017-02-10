@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public class Todo {
     private String mContent;
+    private boolean selected;
 
     public Todo(String content) {
         mContent = content;
@@ -19,5 +20,13 @@ public class Todo {
 
     public void setContent(String content) {
         this.mContent = content;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }

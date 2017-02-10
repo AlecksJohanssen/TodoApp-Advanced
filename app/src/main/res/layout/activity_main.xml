@@ -17,17 +17,17 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:onClick=""/>
+        />
 
     <EditText
         android:layout_width="141dp"
         android:layout_height="60dp"
         android:id="@+id/tdEditText"
-        android:layout_alignParentStart="true"
         android:hint="@string/etTodo"
         android:textSize="17sp"
-        android:layout_alignBottom="@+id/rvContents"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_toLeftOf="@+id/tdAddItems"
         android:layout_toStartOf="@+id/tdAddItems" />
 
@@ -37,14 +37,12 @@
         android:text="@string/Add"
         android:id="@+id/tdAddItems"
         android:onClick="btnAddItem"
-        android:layout_marginBottom="10dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
         android:layout_gravity="right"
         android:layout_weight="0.32"
-        android:layout_alignParentRight="true" />
-
-
+        android:layout_marginTop="9dp"
+        android:layout_alignTop="@+id/tdEditText"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 
 </RelativeLayout>
