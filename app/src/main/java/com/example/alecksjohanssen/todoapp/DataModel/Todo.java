@@ -8,10 +8,22 @@ import java.util.ArrayList;
 
 public class Todo {
     private String mContent;
+    private int mID;
     private boolean selected;
+
+    public Todo() {}
+
 
     public Todo(String content) {
         mContent = content;
+    }
+
+    public int getID() {
+        return mID;
+    }
+
+    public void setID(int id) {
+        this.mID = id;
     }
 
     public String getContent() {
@@ -26,7 +38,4 @@ public class Todo {
         return selected;
     }
 
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
 }

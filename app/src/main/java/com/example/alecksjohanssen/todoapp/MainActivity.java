@@ -5,6 +5,8 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 import com.example.alecksjohanssen.todoapp.DataAdapter.CustomRCAdapter;
 import com.example.alecksjohanssen.todoapp.DataAdapter.TodosAdapter;
 import com.example.alecksjohanssen.todoapp.DataModel.Todo;
+import com.example.alecksjohanssen.todoapp.DatabaseHelper.DatabaseHelper;
 import com.example.alecksjohanssen.todoapp.Support.ItemClickSupport;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,6 +33,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,11 +43,11 @@ public class MainActivity extends AppCompatActivity {
     private String mContent;
     private EditText contentValue;
     private  TodosAdapter adapter;
-    private CheckBox checkBox;
     private  RecyclerView recyclerView;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference myRef = database.getReference("todo");
-
+    private DatabaseReference myRef;
+    private DatabaseHelper TDdb;
+    boolean alreadyExecuted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,12 +59,38 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         contentValue = (EditText) findViewById(R.id.tdEditText);
         btnCreateContent = (Button) findViewById(R.id.tdAddItems);
+        TDdb = new DatabaseHelper(this);
+        myRef = database.getReference("todo");
+        checkifOnline();
         AddNewTodo();
         implementClickonRC();
     }
 
-    private void pushToFireBase(String content) {
-        myRef.setValue(content);
+    private void pushToFireBase(String content, int id) {
+        myRef.child("todo" + id).setValue(content);
+    }
+
+    private void checkifOnline() {
+        if(alreadyExecuted = false) {
+            alreadyExecuted = true;
+            if(isOnline()) {
+                Toast.makeText(getApplicationContext(),"PULL DATA", Toast.LENGTH_SHORT).show();
+                pullDataFromFireBase();
+            } else {
+                mTodos.addAll(TDdb.getAllTodos());
+            }
+        }
+    }
+
+    private boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        } catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+        return false;
     }
 
     private void implementClickonRC() {
@@ -86,13 +116,27 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(isOnline()) {
+            pullDataFromFireBase();
+        } else {
+            mTodos.addAll(TDdb.getAllTodos());
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+
     private void pullDataFromFireBase() {
-        // Read from the database
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String value = dataSnapshot.getValue(String.class);
-                Log.d( "Value is: ", String.valueOf(value));
+                for (DataSnapshot childDataSnapshot : dataSnapshot.getChildren()) {
+                    String value = childDataSnapshot.getValue(String.class);
+                    mTodos.add(new Todo(value));
+                    adapter.notifyDataSetChanged();
+                }
             }
 
             @Override
@@ -116,9 +160,12 @@ public class MainActivity extends AppCompatActivity {
                     mTodos.add(new Todo(mContent));
                     adapter.notifyDataSetChanged();
                     contentValue.setText(null);
-                    pushToFireBase(mContent);
+                    pushToFireBase(mContent, mTodos.size() -1);
+                    TDdb.insertData(mContent);
                 }
             }
         });
     }
+
+
 }
