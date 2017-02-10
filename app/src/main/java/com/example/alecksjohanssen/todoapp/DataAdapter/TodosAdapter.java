@@ -73,6 +73,7 @@ public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.ViewHolder> 
                     mTodos.remove(clickedPos);
                     notifyItemRemoved(clickedPos);
                     notifyItemRangeChanged(clickedPos, mTodos.size());
+                    Toast.makeText(getContext(), "Woohoo Well done!.", Toast.LENGTH_SHORT).show();
                     lastChecked = cb;
                     lastCheckedPos = clickedPos;
                 }

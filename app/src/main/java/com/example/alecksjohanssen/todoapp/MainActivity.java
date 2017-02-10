@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
             alreadyExecuted = true;
             if(isOnline()) {
                 Toast.makeText(getApplicationContext(),"PULL DATA", Toast.LENGTH_SHORT).show();
+                mTodos.clear();
                 pullDataFromFireBase();
             } else {
                 mTodos.addAll(TDdb.getAllTodos());
@@ -103,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
                 Bundle args = new Bundle();
                 args.putInt("item_position", position);
                 SharedPreferences.Editor editor = getSharedPreferences("key", MODE_PRIVATE).edit();
-                Log.d("Data", mTodos.get(position).getContent());
                 editor.putString("current_todo", mTodos.get(position).getContent());
                 editor.commit();
                 mEditTodo.setArguments(args);
@@ -125,8 +125,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if(isOnline()) {
+            mTodos.clear();
             pullDataFromFireBase();
         } else {
+            mTodos.clear();
             mTodos.addAll(TDdb.getAllTodos());
             adapter.notifyDataSetChanged();
         }

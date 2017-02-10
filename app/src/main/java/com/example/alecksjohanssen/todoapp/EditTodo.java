@@ -72,8 +72,6 @@ public class EditTodo extends DialogFragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
             mNum = getArguments().getInt("item_position");
             mTodo = getArguments().getString("current_todo");
-            Log.d("Init", String.valueOf(mNum));
-
         }
         SharedPreferences prefs = getActivity().getSharedPreferences("key", getActivity().MODE_PRIVATE);
         mTodo = prefs.getString("current_todo", "blah");
@@ -102,7 +100,6 @@ public class EditTodo extends DialogFragment {
         v = i.inflate(R.layout.fragment_edit_todo, null);
         editText = (EditText) v.findViewById(R.id.editTodo);
         editText.setText(mTodo);
-        Log.d("Currennt Todo", mTodo);
         b.setView(v);
         return b.create();
     }
